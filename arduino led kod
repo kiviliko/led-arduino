@@ -5,7 +5,7 @@
 // - Butonun bir ucu Arduino pinine (ör. 7), diğer ucu GND'ye bağlanır
 // - Buton pinini INPUT_PULLUP ile kullanıyoruz (harici pull-down gerekmez)
 
-const int ledPin = 13;       // değiştirmek istersen burayı değiştir
+const int ledPin = 9;       // değiştirmek istersen burayı değiştir
 const int buttonPin = 7;     // buton bağlı pin
 
 // debounce ayarları
