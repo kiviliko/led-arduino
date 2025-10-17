@@ -1,0 +1,47 @@
+// LED toggle with button (debounced)
+// Bağlantı:
+// - LED'in + bacağı (uzun) Arduino pinine (ör. 13) bağlanır
+// - LED'in - bacağı (kısa) 220Ω direnç üzerinden GND'ye bağlanır
+// - Butonun bir ucu Arduino pinine (ör. 7), diğer ucu GND'ye bağlanır
+// - Buton pinini INPUT_PULLUP ile kullanıyoruz (harici pull-down gerekmez)
+
+const int ledPin = 13;       // değiştirmek istersen burayı değiştir
+const int buttonPin = 7;     // buton bağlı pin
+
+// debounce ayarları
+unsigned long lastDebounceTime = 0;
+const unsigned long debounceDelay = 50; // ms
+
+int lastButtonReading = HIGH;  // INPUT_PULLUP kullandığımız için idle = HIGH
+bool ledState = false;         // LED durumu (false = kapalı, true = açık)
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  digitalWrite(ledPin, LOW);
+}
+
+void loop() {
+  int reading = digitalRead(buttonPin);
+
+  // Buton durumunda değişiklik olduysa debounce için zamanı kaydet
+  if (reading != lastButtonReading) {
+    lastDebounceTime = millis();
+  }
+
+  // Değişikliğin "gerçek" olduğunu kabul etmeden önce debounceDelay süresini bekle
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    // Eğer okunan buton değeri önceki stabil değerden farklıysa...
+    static int stableButtonState = HIGH;
+    if (reading != stableButtonState) {
+      stableButtonState = reading;
+      // Buton aktifLOW olduğunda (basılı) toggle işlemi yap
+      if (stableButtonState == LOW) {
+        ledState = !ledState;
+        digitalWrite(ledPin, ledState ? HIGH : LOW);
+      }
+    }
+  }
+
+  lastButtonReading = reading;
+}
